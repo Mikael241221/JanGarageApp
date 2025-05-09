@@ -1,0 +1,19 @@
+{
+  "name": "jangarageapp",
+  "version": "1.0.0",
+  "description": "The vital garage app",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Mikael241221/JanGarageApp.git"
+  },
+  "author": "Myself",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Mikael241221/JanGarageApp/issues"
+  },
+  "homepage": "https://github.com/Mikael241221/JanGarageApp#readme"
+}
