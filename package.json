@@ -15,5 +15,10 @@
   "bugs": {
     "url": "https://github.com/Mikael241221/JanGarageApp/issues"
   },
-  "homepage": "https://github.com/Mikael241221/JanGarageApp#readme"
+  "homepage": "https://github.com/Mikael241221/JanGarageApp#readme",
+  "dependencies": {
+    "dotenv": "^16.5.0",
+    "express": "^5.1.0",
+    "mysql2": "^3.14.1"
+  }
 }
