@@ -5,6 +5,7 @@ import AddEmployeeForm from '../../components/Admin/AddEmployeeForm/AddEmployeeF
 import AdminMenu from '../../components/Admin/AdminMenu/AdminMenu';
 
 function AddEmployee(props) {
+  
   return (
     <div>
       <div className="container-fluid admin-pages">
