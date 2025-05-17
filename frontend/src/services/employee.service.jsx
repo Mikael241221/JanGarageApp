@@ -17,4 +17,3 @@ const employeeService = {
     createEmployee,
 };
 export default employeeService;
-// import from the env

@@ -1,95 +1,85 @@
 import React, { useState } from 'react';
-import {useNavigate, useLocation} from 'react-router-dom'
+import { useNavigate, useLocation } from "react-router-dom";
+import loginService from '../../../services/login.service';
 
-function LoginForm(props) {
+function LoginForm() {
+  const navigate = useNavigate();
+  const location = useLocation();
+  const [employee_email, setEmail] = useState('');
+  const [employee_password, setPassword] = useState('');
+  const [emailError, setEmailError] = useState('');
+  const [passwordError, setPasswordError] = useState('');
+  const [serverError, setServerError] = useState('');
 
- const navigate = useNavigate();
- const location = useLocation();
- const [employee_email, setEmail] = useState('')
- const [employee_password, setPassword] = useState('')
- const [emailError, setEmailError] = useState('')
- const [passwordError, setPasswordError] = useState('')
- const [serverError, setServerError] = useState('')
-
- const handleSubmit  = (e) =>{
-  // prevent the default submission
-  e.preventDefault();
-  // handle client side validation 
-  let valid = true;
-   // Email is required
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+    // Handle client side validations here 
+    let valid = true; // Flag 
+    // Email validation
     if (!employee_email) {
-      setEmailError("Email is required");
+      setEmailError('Please enter your email address first');
       valid = false;
-    }else if (!employee_email.includes("@")){
-      setEmailError("Email is not valid");
-      
+    } else if (!employee_email.includes('@')) {
+      setEmailError('Invalid email format');
     } else {
-      const regex =/^\S+@\S+\.\S+$/;
+      const regex = /^\S+@\S+\.\S+$/;
       if (!regex.test(employee_email)) {
-        setEmailError("Email is not valid");
+        setEmailError('Invalid email format');
         valid = false;
       } else {
-        setEmailError("");
+        setEmailError('');
       }
     }
-    // password has to be at least 6 characters long
+    // Password has to be at least 6 characters long
     if (!employee_password || employee_password.length < 6) {
-      setPasswordError("Password must be at least 6 characters long");
+      setPasswordError('Password must be at least 6 characters long');
       valid = false;
-    }
-    else {
-      setPasswordError("");
+    } else {
+      setPasswordError('');
     }
     if (!valid) {
       return;
     }
-
-    // handle form submission
+    // Handle form submission here
     const formData = {
       employee_email,
       employee_password
-    }
+    };
     console.log(formData);
-     
-    // pass the form to the service
-    const loginEmployee = loginService.logIn(formData)
-    newLogin.then((response) => response.json())
-    .then ((response) =>{
-      console.log(response);
-      if(response.status ==="success"){
-        // save the user into the local storage
-        if (response.data.employee_token){
-          console.log(response.data)
-          localStorage.setItem("employee",JSON.stringify(response.data, loginEmployee))
+    // Call the service
+    const loginEmployee = loginService.logIn(formData);
+    console.log(loginEmployee);
+    loginEmployee.then((response) => response.json())
+      .then((response) => {
+        console.log(response);
+        if (response.status === 'success') {
+          // Save the user in the local storage
+          if (response.data.employee_token) {
+            console.log(response.data);
+            localStorage.setItem("employee", JSON.stringify(response.data));
+          }
+          // Redirect the user to the dashboard
+          // navigate('/admin');
+          console.log(location);
+          if (location.pathname === '/login') {
+            // navigate('/admin');
+            // window.location.replace('/admin');
+            // To home for now 
+            window.location.replace('/');
+          } else {
+            window.location.reload();
+          }
+        } else {
+          // Show an error message
+          setServerError(response.message);
         }
-        // redirect the user to the dashboard
-        //navigate('/admin')
-        console.log(location);
-        if(location.pathname === '/login'){
-          //navigate('/admin')
-          // window.location.replace('/admin')
-          // to home for now
-          window.location.replace('/')
+      })
+      .catch((err) => {
+        console.log(err);
+        setServerError('An error has occurred. Please try again later.' + err);
+      });
 
-        } else{
-          window.location.reload()
-        }
-        
-      }
-      else{
-          // show the error
-          setServerError(response.message)
-        }
-    })
-    .catch((err) => {
-      console.log(err)
-      setServerError('an error has occured please try again later.')
-
-    })
-
-
- }
- 
+  };
 
   return (
     <section className="contact-section">
@@ -101,17 +91,20 @@ function LoginForm(props) {
           <div className="form-column col-lg-7">
             <div className="inner-column">
               <div className="contact-form">
-              <form onSubmit={handleSubmit}>
+                <form onSubmit={handleSubmit}>
                   <div className="row clearfix">
+
                     <div className="form-group col-md-12">
-                       {serverError && <div className="validation-error">{serverError}</div>}
-                      <input type="email" value={employee_email} name="employee_email" onChange={(e)=>setEmail(e.target.value)} placeholder="Email" />
-                      {emailError && <div className="validation-error">{emailError}</div>}
+                      {serverError && <div className="validation-error" role="alert">{serverError}</div>}
+                      <input type="email" name="employee_email" value={employee_email} onChange={(event) => setEmail(event.target.value)} placeholder="Email" />
+                      {emailError && <div className="validation-error" role="alert">{emailError}</div>}
                     </div>
+
                     <div className="form-group col-md-12">
-                      <input type="password" value={employee_password} name="employee_password" onChange={(e) => setPassword(e.target.value)} placeholder="Password" />
-                      {passwordError && <div className="validation-error">{passwordError}</div>}
+                      <input type="password" name="employee_password" value={employee_password} onChange={(event) => setPassword(event.target.value)} placeholder="Password" />
+                      {passwordError && <div className="validation-error" role="alert">{passwordError}</div>}
                     </div>
+
                     <div className="form-group col-md-12">
                       <button className="theme-btn btn-style-one" type="submit" data-loading-text="Please wait..."><span>Login</span></button>
                     </div>
@@ -121,6 +114,7 @@ function LoginForm(props) {
             </div>
           </div>
         </div>
+
       </div>
     </section>
   );
