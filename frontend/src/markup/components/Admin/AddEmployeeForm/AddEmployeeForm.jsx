@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import employeeService from '../../../../services/employee.service';
+import { useAuth } from '../../../../Context/AuthContext';
 
 function AddEmployeeForm(props) {
   const [employee_email, setEmail] = useState("");
@@ -17,8 +18,13 @@ function AddEmployeeForm(props) {
   const [passwordError, setPasswordError] = useState("");
   const [success, setSuccess] = useState("");
   const [serverError, setServerError] = useState("");
-  const [companyRoleError, setCompanyRoleError] = useState("");
-  const [phoneError, setPhoneError] = useState("");
+
+  //create a variable for token
+  let loggedInEmployeeToken =''
+  const {employee} = useAuth();
+  if(employee && employee.employee_token){
+    loggedInEmployeeToken = employee.employee_token
+  }
 
   const handleSubmit = (e) => { 
     // Prevent the default form submission
@@ -70,7 +76,7 @@ function AddEmployeeForm(props) {
      company_role_id
     };
     // pass the form data to the service
-    const newEmployee = employeeService.createEmployee(formData);
+    const newEmployee = employeeService.createEmployee(formData,loggedInEmployeeToken);
     newEmployee.then((Response)=>Response.json())
     .then((data) =>{
       if(data.error){
@@ -111,6 +117,7 @@ function AddEmployeeForm(props) {
                 <form onSubmit={handleSubmit} >
                   <div className="row clearfix">
                     <div className="form-group col-md-12">
+                      {success && <div className="validation-error">{success}</div>}
                       {serverError && <div className="validation-error">{serverError}</div>}
                       <input type="email" value={employee_email} name="employee_email" onChange={(e) => setEmail(e.target.value)} placeholder="Employee email" />
                       {emailError && <div className="validation-error">{emailError}</div>}
@@ -127,7 +134,7 @@ function AddEmployeeForm(props) {
 
                     <div className="form-group col-md-12">
                       <input type="text" value={employee_phone} name="employee_phone" onChange={(e) => setPhoneNumber(e.target.value)} placeholder="Employee phone (555-555-5555)" required />
-                      {phoneError && <div className="validation-error">{phoneError}</div>}
+                      
                     </div>
 
                     <div className="form-group col-md-12">
@@ -137,7 +144,7 @@ function AddEmployeeForm(props) {
                         <option value="2">Manager</option>
                         <option value="3">Admin</option>
                       </select>
-                      {companyRoleError && <div className="validation-error">{companyRoleError}</div>}
+                      
                     </div>
 
                     <div className="form-group col-md-12">
